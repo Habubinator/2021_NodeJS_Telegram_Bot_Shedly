@@ -1,0 +1,3 @@
+D:\ВУЗы\OPU\JSBOT_for212\obj\Debug\JSBOT_for212.njsproj.AssemblyReference.cache
+D:\ВУЗы\OPU\JSBOT_for212\obj\Debug\JSBOT_for212.njsproj.CoreCompileInputs.cache
+D:\ВУЗы\OPU\JSBOT_for212\bin\Microsoft.NodejsTools.WebRole.dll
