@@ -1,19 +1,47 @@
-const TelegramApi = require(`node-telegram-bot-api`);
-const token = `2135685566:AAFJwFL7o5e4mi8OQ2kgEZFMn5dws0mbNi4`; // OLD TOKEN
+﻿const TelegramApi = require(`node-telegram-bot-api`);
+const token = ``; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
 
+const Options = {
+    disable_web_page_preview: true,
+    parse_mode: `HTML`
+}
+
 bot.setMyCommands([{ command: '/schedule', description: 'Get schedule' }])
+
+// Database after restart of a bot 
+
+let AllData = [[``, ``]]
+let Fcontent = fs.readFileSync("ids.txt", "utf8");
+let NumOfIDS = Fcontent.split(`|i|`);
+PeopleSChat = NumOfIDS[1].split(`|r|`);
+if (PeopleSChat) {
+    for (let i = 0; i < NumOfIDS[0] - 1; i++) {
+        if (AllData[i] != undefined) {
+            AllData.push([``, ``])
+        }
+    }
+    for (i = 0; i < PeopleSChat.length; i++) {
+        temptask = PeopleSChat[i].split(`|n|`)
+        if (AllData[i] != undefined) {
+            for (let j = 0; j < 42; j++) {
+                AllData[i][j] = temptask[j];
+            }
+        }
+
+    }
+}
 
 bot.on(`message`, async msg => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
-    let AllData = [[``, ``]]
-
     if (text != `/q`) {
 
         console.log(msg);
+
+        // MAIN COMMAND
 
         if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
             var CurrTime = Date.now() / 1000;
@@ -28,50 +56,60 @@ Replied!
                 // Read Id and create array
 
                 let Fcontent = fs.readFileSync("ids.txt", "utf8");
-                let NumOfIDS = Fcontent.split(`|`);
-                for (let i = 0; i < NumOfIDS[0] - 1; i++) {
-                    AllData.push([``, ``])
-                }
-                PeopleSChat = NumOfIDS[1].split(`/`);
+                let NumOfIDS = Fcontent.split(`|i|`);
+                PeopleSChat = NumOfIDS[1].split(`|r|`);
                 if (PeopleSChat) {
                     for (i = 0; i < PeopleSChat.length; i++) {
-                        temptask = PeopleSChat[i].split(` `)
-                        for (let j = 0; j < 2; j++) {
-                            AllData[i][j] = temptask[j];
+                        temptask = PeopleSChat[i].split(`|n|`)
+                        if (AllData[i] != undefined) {
+                            for (let j = 0; j < 42; j++) {
+                                AllData[i][j] = temptask[j];
+                            }
                         }
                     }
                 }
 
-
-                // Check id 
+                // Check id data and add element on new id
 
                 let isNewID = true;
                 for (let i = 0; i < NumOfIDS[0]; i++) {
                     if (AllData[i][1] == chatId) {
                         isNewID = false
+                        break;
                     }
                 }
-                if (isNewID === true) {
+                if (isNewID == true) {
                     NumOfIDS[0]++
                     switch (msg.chat.type) {
+                        case `group`:
                         case "supergroup":
-                            let inp1 = msg.chat.title.split(` `);
-                            AllData.push([`${inp1[0]}`, `${chatId}`])
+                            let inp1 = msg.chat.title.split(`|`);
+                            AllData.push([`${inp1[0]}`, `${chatId}`,
+                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                                '', '', '', '', '', '', '', '', '', '', ''])
                             break
                         case "private":
-                            let inp2 = msg.chat.first_name.split(` `);
-                            AllData.push([`${inp2[0]}`, `${chatId}`])
+                            let inp2 = msg.chat.first_name.split(`|`);
+                            AllData.push([`${inp2[0]}`, `${chatId}`,
+                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                                '', '', '', '', '', '', '', '', '', '', ''])
                             break
                     }
 
+                    // write id data 
 
-                    // write data
-
-                    let writedata = `${NumOfIDS[0]}|`
+                    let writedata = `${NumOfIDS[0]}|i|`
                     for (let i = 0; i < NumOfIDS[0]; i++) {
-                        writedata += `${AllData[i][0]} ${AllData[i][1]}`
+                        for (j = 0; j < 42; j++) {
+                            if (AllData[i][j] != undefined) {
+                                writedata += `${AllData[i][j]}`
+                            }
+                            writedata += `|n|`
+                        }
                         if ((NumOfIDS[0] - i) > 1) {
-                            writedata += `/`
+                            writedata += `\r\n|r|`
                         }
                     }
                     fs.writeFileSync("ids.txt", writedata);
@@ -79,12 +117,13 @@ Replied!
 
                 // Test
 
+                //console.log(AllData);
                 //console.log(isNewID);
                 //console.log(NumOfIDS[0]);
                 //console.log(AllData);
 
                 // Send answear
-                return bot.sendMessage(chatId, FindShedule(), {disable_web_page_preview: true}) //await
+                return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
             }
         }
 
@@ -97,14 +136,14 @@ Replied!
             let timerId = setInterval(function ghoul() {
                 if (i >= 0) {
                     try {
-                        bot.sendMessage(`513950472`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 ��� 513950472 ��� 1277561606 nokit
+                        bot.sendMessage(`492582586`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
                     } catch (error) {
                         console.log(error)
                         return
                     }
                 }
                 else {
-                    bot.sendMessage(`513950472`, `ya ghoul`);
+                    bot.sendMessage(`492582586`, `ya ghoul`);
                     clearInterval(timerId);
                 }
             }, 400);
@@ -113,9 +152,11 @@ Replied!
         // WRITE CUSTOM MSG
 
         if (text === `j123`) {
-            return bot.sendMessage(`616950133`, `loh`) // await to make it sync
-
-        }
+            //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options); 
+            // await to make it sync
+            return bot.sendMessage(`-1001356898340`, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения! Желаем новых успехов, отец.`, Options);
+            // await to make it sync
+        } 
     }
 })
 
@@ -128,87 +169,68 @@ function FindTime(time) {
 
 // FORM SCHEDULE 
 
-function FindShedule(time) {
-    time = FindTime();
+function FindShedule(chatId) {
+    let PosOfId;
+    for (let i = 0; i < NumOfIDS[0]; i++) {
+        if (AllData[i][1] == chatId) {
+            PosOfId = i;
+            break;
+        }
+    }
+    let time = FindTime();
     let result;
-    switch (time){
+    switch (time) {
         case 6:
         case 0:
         case 1:
             result = `
-S�hedule for Monday:
+Schedule for Monday:
 
-Programming
-Recording on el opu
-
-Math
-Discord
 `;
+            result = CheckID(2, 9, PosOfId, result);
             break;
         case 2:
             result = `
-Shedule for Tuesday
+Schedule for Tuesday
 
-Empty
-
-OPI
-https://www.youtube.com/channel/UC-A9s_ueFdyA72OOW1mi0NA
-
-KDM
-https://us02web.zoom.us/j/85839059739?pwd=Zm1EVURwWTFuZFN4MlN3ZlA5eWtOQT09#success
-
-SIOD 2/4
-https://us04web.zoom.us/j/7883985166?pwd=VXNSd2RXeGNqNUdlU3RQTjFrcFFIdz09
 `
-            break
+            result = CheckID(10, 17, PosOfId, result);
+            break;
         case 3:
             result = `
-Shedule for Wednessday
+Schedule for Wednessday
 
-Empty
-
-English (Diachenko)
-https://test8poly.jimdofree.com/
-https://vocaroo.com
-
-KDM
-https://us02web.zoom.us/j/86480818332?pwd=eHd0VVJzaW5pR00veGRtb09zYi8wZz09
 `
-            break
+            result = CheckID(18, 25, PosOfId, result);
+            break;
         case 4:
             result = `
-Shedule for Thursday:
+Schedule for Thursday:
 
-History
-https://zoom.us/j/3405314296?pwd=ZmpwelhzLzVkd3ZvQTF4SVJDdDNvQT09
-
-SIOD
-https://us04web.zoom.us/j/7883985166?pwd=VXNSd2RXeGNqNUdlU3RQTjFrcFFIdz09
-
-English (Gvozd/Diachenko)
-https://test8poly.jimdofree.com/
-https://vocaroo.com
-
-History 1/3
-https://zoom.us/j/3405314296?pwd=ZmpwelhzLzVkd3ZvQTF4SVJDdDNvQT09
 `;
+            result = CheckID(26, 33, PosOfId, result);
             break;
         case 5:
             result = `
-Shedule for Friday
+Schedule for Friday
 
-Programming
-https://us04web.zoom.us/j/2017517539?pwd=T0tUTnB1L1JNc0tmZ0NaT2IwMmx1QT09
-
-SIOD 1/3
-https://us04web.zoom.us/j/7883985166?pwd=VXNSd2RXeGNqNUdlU3RQTjFrcFFIdz09
-
-OPI 2/4
-https://us04web.zoom.us/j/5029942117?pwd=a1hMWTdPZk42Q0xiMW80ZFUzWWhjUT09
-
-Math
-Discord
 `
+            result = CheckID(34, 41, PosOfId, result);
+    }
+    return result;
+}
+
+// ECONOM SPACE IN CODE 
+function CheckID(startint, lastint, PosOfId, result) {
+    for (let i = startint; i <= lastint; i++) {
+        if (AllData[PosOfId][i]) {
+            result += `${AllData[PosOfId][i]}
+`
+            if (i % 2 == 1) {
+                result += `
+`
+            }
+        }
     }
     return result;
 }
