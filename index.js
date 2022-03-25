@@ -3,16 +3,17 @@ const token = `2135685566:AAG-5wGTWgL7r0PBolPgbGxilqe1QqCL82s`; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
 
-//
+// Чтобы сервак не падал
 
 const express = require('express')
 const app = express()
-
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-    console.log(`Our app is running on port ${PORT}`);
+    console.log(`Порт - ${PORT}`);
 });
 
+setTimeout(() => console.log(), 600000);
 //
 const Options = {
     disable_web_page_preview: true,
@@ -49,21 +50,14 @@ bot.on(`message`, async msg => {
     const chatId = msg.chat.id;
 
     if (text != `/q`) {
+        var CurrTime = Date.now() / 1000;
+        if (CurrTime - msg.date <= 300) {
+            console.log(`Replied!`)
+            console.log(msg);
 
-        console.log(msg);
+            // MAIN COMMAND
 
-        // MAIN COMMAND
-        
-        if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
-            /*
-            var CurrTime = Date.now() / 1000;
-            if (CurrTime - msg.date <= 300) {
-                console.log(
-                    `
-/////////
-Replied!
-/////////`
-                )
+            if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
 
                 // Read Id and create array
 
@@ -137,43 +131,42 @@ Replied!
                 // Send answear
                 return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
             }
-            */
-        }
 
-        // FAN COMMANDS
+            // FAN COMMANDS
 
-        // WRITE 1000-7
+            // WRITE 1000-7
 
-        if (text === `jghoul`) {
-            let i = 993;
-            let timerId = setInterval(function ghoul() {
-                if (i >= 0) {
-                    try {
-                        bot.sendMessage(`492582586`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
-                    } catch (error) {
-                        console.log(error)
-                        return
+            if (text === `jghoul`) {
+                let i = 993;
+                let timerId = setInterval(function ghoul() {
+                    if (i >= 0) {
+                        try {
+                            bot.sendMessage(`492582586`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
+                        } catch (error) {
+                            console.log(error)
+                            return
+                        }
                     }
-                }
-                else {
-                    bot.sendMessage(`492582586`, `ya ghoul`);
-                    clearInterval(timerId);
-                }
-            }, 400);
-        }
+                    else {
+                        bot.sendMessage(`492582586`, `ya ghoul`);
+                        clearInterval(timerId);
+                    }
+                }, 400);
+            }
 
-        // WRITE CUSTOM MSG
+            // WRITE CUSTOM MSG
 
-        if (text === `j123`) {
-            //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options); 
-            // await to make it sync
-            return bot.sendMessage(`-1001356898340`, `Ставьте лайк чтобы я понял что надо переписать расписание на бота`, Options);
-            // await to make it sync
-        }
-        //ВРЕМЕННО
+            if (text === `j123`) {
+                //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options); 
+                // await to make it sync
+                return bot.sendMessage(`-1001356898340`, `Ставьте лайк чтобы я понял что надо переписать расписание на бота`, Options);
+                // await to make it sync
+            }
+            //ВРЕМЕННО
 
-        if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
-            bot.sendSticker(chatId, `poshel.webp`);
+            if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+                bot.sendSticker(chatId, `poshel.webp`);
+            }
         }
     }
 })

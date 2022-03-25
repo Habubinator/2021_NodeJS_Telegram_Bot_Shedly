@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "stop": "node stop.js"
   },
   "dependencies": {
     "express": "^4.17.3",
