@@ -9,5 +9,9 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.54.0",
+    "nodemon": "^2.0.15"
   }
 }
