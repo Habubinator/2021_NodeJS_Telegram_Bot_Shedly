@@ -5,6 +5,7 @@ const fs = require(`fs`);
 
 // Чтобы сервак не падал
 
+// Ищем порт
 const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000;
@@ -13,7 +14,31 @@ app.listen(PORT, () => {
     console.log(`Порт - ${PORT}`);
 });
 
-setTimeout(() => console.log(), 600000);
+// сбрасываем идл хероку
+var http = require('http');
+
+function KeepAlive() {
+    setInterval(function () {
+        var KeepAliveOptions = {
+            host: 'shedule-as-212.herokuapp.com',
+            port: 80,
+            path: '/'
+        };
+        http.get(KeepAliveOptions, function (res) {
+            res.on('data', function (chunk) {
+                try {
+                    console.log('Heroku responded - ' + chunk)
+                }
+                catch (err) {
+                    console.log(err.message);
+                }
+            });
+        }).on('error', function (err) {
+            console.log('Error: ' + err.message);
+        });
+    }, 20*60*1000) // 20 minutes
+}
+
 //
 const Options = {
     disable_web_page_preview: true,
