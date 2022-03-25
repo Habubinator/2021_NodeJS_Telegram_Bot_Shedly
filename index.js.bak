@@ -8,14 +8,12 @@ const Options = {
     parse_mode: `HTML`
 }
 
-// сервер хероку не коннектит к локал хосту - присоединяем порт
+// сервер хероку не коннектит к локал хосту
 
-const host = '0.0.0.0';
-const port = process.env.PORT || 3000;
-
-app.listen(port, host, function() {
-  console.log("Server started.......");
-});
+let timerId = setTimeout(CheckActive(), 10000);
+function CheckActive(){
+	console.log();
+}
 
 //
 
