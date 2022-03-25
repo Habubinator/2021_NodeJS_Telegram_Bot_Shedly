@@ -3,6 +3,11 @@ const token = `2135685566:AAG-5wGTWgL7r0PBolPgbGxilqe1QqCL82s`; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${PORT}`);
+});
+
 const Options = {
     disable_web_page_preview: true,
     parse_mode: `HTML`
