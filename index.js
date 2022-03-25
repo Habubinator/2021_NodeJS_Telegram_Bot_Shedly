@@ -1,5 +1,5 @@
 ﻿const TelegramApi = require(`node-telegram-bot-api`);
-const token = ``; // NEW TOKEN
+const token = `2135685566:AAG-5wGTWgL7r0PBolPgbGxilqe1QqCL82s`; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
 
@@ -42,8 +42,9 @@ bot.on(`message`, async msg => {
         console.log(msg);
 
         // MAIN COMMAND
-
+        
         if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+            /*
             var CurrTime = Date.now() / 1000;
             if (CurrTime - msg.date <= 300) {
                 console.log(
@@ -125,6 +126,7 @@ Replied!
                 // Send answear
                 return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
             }
+            */
         }
 
         // FAN COMMANDS
@@ -154,9 +156,14 @@ Replied!
         if (text === `j123`) {
             //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options); 
             // await to make it sync
-            return bot.sendMessage(`-1001356898340`, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения! Желаем новых успехов, отец.`, Options);
+            return bot.sendMessage(`-1001356898340`, `Ставьте лайк чтобы я понял что надо переписать расписание на бота`, Options);
             // await to make it sync
-        } 
+        }
+        //ВРЕМЕННО
+
+        if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+            bot.sendSticker(chatId, `poshel.webp`);
+        }
     }
 })
 
