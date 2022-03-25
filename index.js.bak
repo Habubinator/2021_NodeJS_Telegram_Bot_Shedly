@@ -8,6 +8,16 @@ const Options = {
     parse_mode: `HTML`
 }
 
+// сервер хероку не коннектит к локал хосту - присоединяем порт сервера
+
+var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+var server_host = process.env.YOUR_HOST || '0.0.0.0';
+server.listen(server_port, server_host, function() {
+    console.log('Listening on port %d', server_port);
+});
+
+//
+
 bot.setMyCommands([{ command: '/schedule', description: 'Get schedule' }])
 
 // Database after restart of a bot 
