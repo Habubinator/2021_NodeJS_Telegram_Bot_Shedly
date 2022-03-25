@@ -8,15 +8,6 @@ const Options = {
     parse_mode: `HTML`
 }
 
-// сервер хероку не коннектит к локал хосту
-
-let timerId = setTimeout(CheckActive, 10000);
-function CheckActive(){
-	console.log();
-}
-
-//
-
 bot.setMyCommands([{ command: '/schedule', description: 'Get schedule' }])
 
 // Database after restart of a bot 

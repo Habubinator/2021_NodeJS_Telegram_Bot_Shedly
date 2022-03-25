@@ -10,7 +10,7 @@ const Options = {
 
 // сервер хероку не коннектит к локал хосту
 
-let timerId = setTimeout(CheckActive(), 10000);
+let timerId = setTimeout(CheckActive, 10000);
 function CheckActive(){
 	console.log();
 }
