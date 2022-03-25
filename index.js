@@ -58,7 +58,7 @@ bot.on(`message`, async msg => {
             // MAIN COMMAND
 
             if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
-
+                /*
                 // Read Id and create array
 
                 let Fcontent = fs.readFileSync("ids.txt", "utf8");
@@ -130,6 +130,7 @@ bot.on(`message`, async msg => {
 
                 // Send answear
                 return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
+                */
             }
 
             // FAN COMMANDS
