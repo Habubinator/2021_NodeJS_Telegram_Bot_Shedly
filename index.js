@@ -5,6 +5,10 @@ const fs = require(`fs`);
 
 // Чтобы сервак не падал
 
+/* 
+// ПЫТАЛСЯ СДЕЛАТЬ АВТОПИНГ БОТА НО ВСЁ ПОШЛО ПО ПИЗДЕ
+// Впустую потрачено часов на фикс: 4 - Обновить если в будущем потянет заниматься хуйнёй
+
 // Ищем порт
 const express = require('express')
 const app = express()
@@ -38,7 +42,7 @@ function KeepAlive() {
         });
     }, 20*60*1000) // 20 minutes
 }
-
+*/
 //
 const Options = {
     disable_web_page_preview: true,
@@ -83,6 +87,9 @@ bot.on(`message`, async msg => {
             // MAIN COMMAND
 
             if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+
+                // Пока нет расписания то отправляется стикер (см.ниже)
+
                 /*
                 // Read Id and create array
 
@@ -167,14 +174,14 @@ bot.on(`message`, async msg => {
                 let timerId = setInterval(function ghoul() {
                     if (i >= 0) {
                         try {
-                            bot.sendMessage(`492582586`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
+                            bot.sendMessage(`513950472`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
                         } catch (error) {
                             console.log(error)
                             return
                         }
                     }
                     else {
-                        bot.sendMessage(`492582586`, `ya ghoul`);
+                        bot.sendMessage(`513950472`, `ya ghoul`);
                         clearInterval(timerId);
                     }
                 }, 400);
@@ -188,7 +195,8 @@ bot.on(`message`, async msg => {
                 return bot.sendMessage(`-1001356898340`, `Ставьте лайк чтобы я понял что надо переписать расписание на бота`, Options);
                 // await to make it sync
             }
-            //ВРЕМЕННО
+
+            //ВРЕМЕННО, пока нет расписания
 
             if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
                 bot.sendSticker(chatId, `poshel.webp`);
