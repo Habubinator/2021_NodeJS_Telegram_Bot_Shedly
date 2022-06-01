@@ -49,7 +49,8 @@ const Options = {
     parse_mode: `HTML`
 }
 
-bot.setMyCommands([{ command: '/schedule', description: 'Get schedule' }])
+bot.setMyCommands([{ command: '/schedule', description: 'Расписание' },
+                   { command: '/anek', description: 'Смешной (или нет) анек' }])
 
 // Database after restart of a bot 
 
@@ -73,6 +74,11 @@ if (PeopleSChat) {
 
     }
 }
+
+let tempaneks = fs.readFileSync("aneks.txt", "utf-8")
+tempaneks = AllAneks.split('\'')
+var AllAneks = tempaneks.filter((e, i) => (i % 2))
+console.log("Анекдоты вставлены")
 
 bot.on(`message`, async msg => {
     const text = msg.text;
@@ -200,6 +206,10 @@ bot.on(`message`, async msg => {
 
             if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
                 bot.sendSticker(chatId, `poshel.webp`);
+            }
+            if (text === `/anek` || text === `/anek@JekichSheduleBot`) {
+                let chosenanek = AllAneks[Math.random() * AllAneks.length]
+                bot.sendSticker(chatId, chosenanek);
             }
         }
     }
