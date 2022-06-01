@@ -75,9 +75,14 @@ if (PeopleSChat) {
     }
 }
 
+var re = /\\n/gi;
 let tempaneks = fs.readFileSync("aneks.txt", "utf-8")
 tempaneks = tempaneks.split('\'')
 var AllAneks = tempaneks.filter((e, i) => (i % 2))
+for (i = 0; i < AllAneks.length; i++) {
+    AllAneks[i] = AllAneks[i].replace(re, `
+`)
+}
 console.log("Анекдоты вставлены")
 
 bot.on(`message`, async msg => {
@@ -208,8 +213,8 @@ bot.on(`message`, async msg => {
                 bot.sendSticker(chatId, `poshel.webp`);
             }
             if (text === `/anek` || text === `/anek@JekichSheduleBot`) {
-                let chosenanek = AllAneks[Math.random() * AllAneks.length]
-                bot.sendSticker(chatId, chosenanek);
+                let chosenanek = AllAneks[Math.floor(Math.random() * AllAneks.length)]
+                return bot.sendMessage(chatId, chosenanek, Options);
             }
         }
     }
