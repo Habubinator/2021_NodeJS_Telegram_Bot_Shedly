@@ -76,7 +76,7 @@ if (PeopleSChat) {
 }
 
 let tempaneks = fs.readFileSync("aneks.txt", "utf-8")
-tempaneks = AllAneks.split('\'')
+tempaneks = tempaneks.split('\'')
 var AllAneks = tempaneks.filter((e, i) => (i % 2))
 console.log("Анекдоты вставлены")
 
