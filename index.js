@@ -76,7 +76,7 @@ if (PeopleSChat) {
 
     }
 }
-
+/*
 var re = /\\n/gi;
 let tempaneks = fs.readFileSync("aneks.txt", "utf-8")
 tempaneks = tempaneks.split('\'')
@@ -86,7 +86,7 @@ for (i = 0; i < AllAneks.length; i++) {
 `)
 }
 console.log("Анекдоты вставлены")
-
+*/
 bot.on(`message`, async msg => {
     const text = msg.text;
     const chatId = msg.chat.id;
