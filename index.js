@@ -2,7 +2,8 @@
 const token = `2135685566:AAG-5wGTWgL7r0PBolPgbGxilqe1QqCL82s`; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
-
+const { send } = require("express/lib/response");
+let sender = 'aboba';
 // Чтобы сервак не падал
 
 /* 
@@ -50,12 +51,13 @@ const Options = {
 }
 
 bot.setMyCommands([{ command: '/schedule', description: 'Расписание' },
-                   { command: '/anek', description: 'Смешной (или нет) анек' }])
+                   { command: '/anek', description: 'Смешной (или нет) анек' },
+                   { command: '/nahuy', description: 'ЛЕША ШЛЕТ НАХУЙ'}])
 
 // Database after restart of a bot 
 
 let AllData = [[``, ``]]
-let Fcontent = fs.readFileSync("ids.txt", "utf8");
+let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
 let NumOfIDS = Fcontent.split(`|i|`);
 PeopleSChat = NumOfIDS[1].split(`|r|`);
 if (PeopleSChat) {
@@ -89,6 +91,14 @@ bot.on(`message`, async msg => {
     const text = msg.text;
     const chatId = msg.chat.id;
 
+    //чекалка сообщений 
+
+    if (`${chatId}` == `${sender}`) {
+        console.log(msg)
+        bot.sendMessage(`513950472`, text, Options);
+    }
+
+
     if (text != `/q`) {
         var CurrTime = Date.now() / 1000;
         if (CurrTime - msg.date <= 300) {
@@ -99,24 +109,38 @@ bot.on(`message`, async msg => {
 
             if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
 
-                // Пока нет расписания то отправляется стикер (см.ниже)
+                // Check week number, read Id and create array
 
-                /*
-                // Read Id and create array
-
-                let Fcontent = fs.readFileSync("ids.txt", "utf8");
-                let NumOfIDS = Fcontent.split(`|i|`);
-                PeopleSChat = NumOfIDS[1].split(`|r|`);
-                if (PeopleSChat) {
-                    for (i = 0; i < PeopleSChat.length; i++) {
-                        temptask = PeopleSChat[i].split(`|n|`)
-                        if (AllData[i] != undefined) {
-                            for (let j = 0; j < 42; j++) {
-                                AllData[i][j] = temptask[j];
+                if (weekNumber() % 2 == 0) {
+                    let Fcontent = fs.readFileSync("ids_odd.txt", "utf8");
+                    let NumOfIDS = Fcontent.split(`|i|`);
+                    PeopleSChat = NumOfIDS[1].split(`|r|`);
+                    if (PeopleSChat) {
+                        for (i = 0; i < PeopleSChat.length; i++) {
+                            temptask = PeopleSChat[i].split(`|n|`)
+                            if (AllData[i] != undefined) {
+                                for (let j = 0; j < 42; j++) {
+                                    AllData[i][j] = temptask[j];
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
+                    let NumOfIDS = Fcontent.split(`|i|`);
+                    PeopleSChat = NumOfIDS[1].split(`|r|`);
+                    if (PeopleSChat) {
+                        for (i = 0; i < PeopleSChat.length; i++) {
+                            temptask = PeopleSChat[i].split(`|n|`)
+                            if (AllData[i] != undefined) {
+                                for (let j = 0; j < 42; j++) {
+                                    AllData[i][j] = temptask[j];
+                                }
                             }
                         }
                     }
                 }
+
 
                 // Check id data and add element on new id
 
@@ -173,7 +197,7 @@ bot.on(`message`, async msg => {
 
                 // Send answear
                 return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
-                */
+
             }
 
             // FAN COMMANDS
@@ -198,18 +222,34 @@ bot.on(`message`, async msg => {
                 }, 400);
             }
 
-            // WRITE CUSTOM MSG
+            if (text != undefined &&
+                chatId == '513950472') {
 
-            if (text === `j123`) {
-                //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options); 
-                // await to make it sync
-                return bot.sendMessage(`-1001356898340`, `Ставьте лайк чтобы я понял что надо переписать расписание на бота`, Options);
-                // await to make it sync
+                //CHANGE TO WHO WE SEND
+
+                if (text == 'jchsnd') {
+                    return bot.sendMessage(chatId, `Now sending msg to ${sender}`, Options);
+                } else
+                    if (text.indexOf(`jchsnd `) > -1) {
+                        sender = text.substring(7);
+                        return bot.sendMessage(chatId, `Now sending msg to ${sender}`, Options);
+                    }
+
+                // WRITE CUSTOM MSG
+
+                if (text.indexOf(`j123 `) > -1) {
+                    //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options);
+                    // await to make it sync
+                    let temp = text.substring(5)
+                    return bot.sendMessage(sender, temp, Options);
+                    // await to make it sync
+                }
             }
 
-            //ВРЕМЕННО, пока нет расписания
 
-            if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+            //Было временно стало постоянно
+
+            if (text === `/nahuy` || text === `/nahuy@JekichSheduleBot`) {
                 bot.sendSticker(chatId, `poshel.webp`);
             }
             if (text === `/anek` || text === `/anek@JekichSheduleBot`) {
@@ -219,6 +259,7 @@ bot.on(`message`, async msg => {
         }
     }
 })
+
 
 // CHECK DAY 
 
@@ -293,4 +334,11 @@ function CheckID(startint, lastint, PosOfId, result) {
         }
     }
     return result;
+}
+
+function weekNumber(date = new Date()) {
+    var firstJanuary = new Date(date.getFullYear(), 0, 1);
+    var dayNr = Math.ceil((date - firstJanuary) / (24 * 60 * 60 * 1000));
+    var weekNr = Math.ceil((dayNr + firstJanuary.getDay()) / 7);
+    return weekNr;
 }
