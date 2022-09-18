@@ -185,7 +185,12 @@ bot.on(`message`, async msg => {
                             writedata += `\r\n|r|`
                         }
                     }
-                    fs.writeFileSync("ids.txt", writedata);
+                    if (weekNumber() % 2 == 0) {
+                        fs.writeFileSync("ids_odd.txt", writedata);
+                    }
+                    else {
+                        fs.writeFileSync("ids_even.txt", writedata);
+                    }
                 }
 
                 // Test
@@ -280,44 +285,69 @@ function FindShedule(chatId) {
     }
     let time = FindTime();
     let result;
+    let firstnum;
+    let secondnum;
     switch (time) {
         case 6:
+            let date_for_saturday = new Date();
+            if (date_for_saturday.getFullYear() == 2022) {
+                result = `\nСуботнее расписание:\n\n`;
+                
+                week = (weekNumber() - 36) % 5
+                switch (week) {
+                    case 1:
+                        firstnum = 2;
+                        secondnum = 9;
+                        break;
+                    case 2:
+                        firstnum = 10;
+                        secondnum = 17;
+                        break;
+                    case 3:
+                        firstnum = 18;
+                        secondnum = 25;
+                        break;
+                    case 4:
+                        firstnum = 26;
+                        secondnum = 33;
+                        break;
+                    case 0:
+                        firstnum = 34;
+                        secondnum = 41;
+                        break;
+                }
+                
+            } else {
+                result = `Версия бота устарела, во избежание проблем скрипт расчёта расписания на субботу приостановлен`
+            }
+            break;
         case 0:
         case 1:
-            result = `
-Schedule for Monday:
-
-`;
-            result = CheckID(2, 9, PosOfId, result);
+            result = `\nЕбучий понедельник:\n\n`;
+            firstnum = 2;
+            secondnum = 9;
             break;
         case 2:
-            result = `
-Schedule for Tuesday
-
-`
-            result = CheckID(10, 17, PosOfId, result);
+            result = `\nЕбучий вторник:\n\n`
+            firstnum = 10;
+            secondnum = 17;
             break;
         case 3:
-            result = `
-Schedule for Wednessday
-
-`
-            result = CheckID(18, 25, PosOfId, result);
+            result = `\nСреда - половина недели:\n\n`
+            firstnum = 18;
+            secondnum = 25;
             break;
         case 4:
-            result = `
-Schedule for Thursday:
-
-`;
-            result = CheckID(26, 33, PosOfId, result);
+            result = `\nЧетверг - почти отдых:\n\n`;
+            firstnum = 26;
+            secondnum = 33;
             break;
         case 5:
-            result = `
-Schedule for Friday
-
-`
-            result = CheckID(34, 41, PosOfId, result);
+            result = `\nПятница - скоро отдых:\n\n`
+            firstnum = 34;
+            secondnum = 41;
     }
+    result = CheckID(firstnum,secondnum, PosOfId, result);
     return result;
 }
 
@@ -325,12 +355,12 @@ Schedule for Friday
 function CheckID(startint, lastint, PosOfId, result) {
     for (let i = startint; i <= lastint; i++) {
         if (AllData[PosOfId][i]) {
-            result += `${AllData[PosOfId][i]}
-`
+            result += `${AllData[PosOfId][i]}\n`
+            /*
             if (i % 2 == 1) {
-                result += `
-`
+                result += `\n`
             }
+            */
         }
     }
     return result;
