@@ -293,7 +293,7 @@ function FindShedule(chatId) {
             if (date_for_saturday.getFullYear() == 2022) {
                 result = `\nСуботнее расписание:\n\n`;
                 
-                week = (weekNumber() - 36) % 5
+                week = (weekNumber() - 35) % 5
                 switch (week) {
                     case 1:
                         firstnum = 2;
