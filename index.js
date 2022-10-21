@@ -57,7 +57,7 @@ bot.setMyCommands([{ command: '/schedule_today', description: 'Расписан�
 
 // Database after restart of a bot 
 
-let AllData = [[``, ``]]
+var AllData = [[``, ``]]
 let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
 let NumOfIDS = Fcontent.split(`|i|`);
 PeopleSChat = NumOfIDS[1].split(`|r|`);
