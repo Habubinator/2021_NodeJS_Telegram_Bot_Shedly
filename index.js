@@ -50,7 +50,8 @@ const Options = {
     parse_mode: `HTML`
 }
 
-bot.setMyCommands([{ command: '/schedule', description: 'Расписание' },
+bot.setMyCommands([{ command: '/schedule_today', description: 'Расписание' },
+                   { command: '/schedule_tomorrow', description: 'Расписание на завтра' },
                    { command: '/anek', description: 'Смешной (или нет) анек' },
                    { command: '/nahuy', description: 'ЛЕША ШЛЕТ НАХУЙ'}])
 
@@ -107,91 +108,9 @@ bot.on(`message`, async msg => {
 
             // MAIN COMMAND
 
-            if (text === `/schedule` || text === `/schedule@JekichSheduleBot`) {
+            if (text === `/schedule_today` || text === `/schedule_today@JekichSheduleBot`) {
 
-                // Check week number, read Id and create array
-
-                if (weekNumber() % 2 == 0) {
-                    let Fcontent = fs.readFileSync("ids_odd.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                // Check id data and add element on new id
-
-                let isNewID = true;
-                for (let i = 0; i < NumOfIDS[0]; i++) {
-                    if (AllData[i][1] == chatId) {
-                        isNewID = false
-                        break;
-                    }
-                }
-                if (isNewID == true) {
-                    NumOfIDS[0]++
-                    switch (msg.chat.type) {
-                        case `group`:
-                        case "supergroup":
-                            let inp1 = msg.chat.title.split(`|`);
-                            AllData.push([`${inp1[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                        case "private":
-                            let inp2 = msg.chat.first_name.split(`|`);
-                            AllData.push([`${inp2[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                    }
-
-                    // write id data 
-
-                    let writedata = `${NumOfIDS[0]}|i|`
-                    for (let i = 0; i < NumOfIDS[0]; i++) {
-                        for (j = 0; j < 42; j++) {
-                            if (AllData[i][j] != undefined) {
-                                writedata += `${AllData[i][j]}`
-                            }
-                            writedata += `|n|`
-                        }
-                        if ((NumOfIDS[0] - i) > 1) {
-                            writedata += `\r\n|r|`
-                        }
-                    }
-                    if (weekNumber() % 2 == 0) {
-                        fs.writeFileSync("ids_odd.txt", writedata);
-                    }
-                    else {
-                        fs.writeFileSync("ids_even.txt", writedata);
-                    }
-                }
+                doDataBaseShit(); // пусть будет тут
 
                 // Test
 
@@ -201,10 +120,13 @@ bot.on(`message`, async msg => {
                 //console.log(AllData);
 
                 // Send answear
-                return bot.sendMessage(chatId, FindShedule(chatId), Options) //await
+                return bot.sendMessage(chatId, FindShedule(chatId,true), Options); //await
 
             }
-
+            if (text === "/schedule_tomorrow" || text === "/schedule_tomorrow@JekichSheduleBot") {
+                doDataBaseShit();
+                return bot.sendMessage(chatId, FindShedule(chatId,false), Options);
+            }
             // FAN COMMANDS
 
             // WRITE 1000-7
@@ -275,7 +197,7 @@ function FindTime(time) {
 
 // FORM SCHEDULE 
 
-function FindShedule(chatId) {
+function FindShedule(chatId, isToday) {
     let PosOfId;
     for (let i = 0; i < NumOfIDS[0]; i++) {
         if (AllData[i][1] == chatId) {
@@ -284,6 +206,9 @@ function FindShedule(chatId) {
         }
     }
     let time = FindTime();
+    if (!isToday) {
+        time += 1;
+    } 
     let result;
     let firstnum;
     let secondnum;
@@ -371,4 +296,90 @@ function weekNumber(date = new Date()) {
     var dayNr = Math.ceil((date - firstJanuary) / (24 * 60 * 60 * 1000));
     var weekNr = Math.ceil((dayNr + firstJanuary.getDay()) / 7);
     return weekNr;
+}
+
+function doDataBaseShit() {
+    // Check week number, read Id and create array
+
+    if (weekNumber() % 2 == 0) {
+        let Fcontent = fs.readFileSync("ids_odd.txt", "utf8");
+        let NumOfIDS = Fcontent.split(`|i|`);
+        PeopleSChat = NumOfIDS[1].split(`|r|`);
+        if (PeopleSChat) {
+            for (i = 0; i < PeopleSChat.length; i++) {
+                temptask = PeopleSChat[i].split(`|n|`)
+                if (AllData[i] != undefined) {
+                    for (let j = 0; j < 42; j++) {
+                        AllData[i][j] = temptask[j];
+                    }
+                }
+            }
+        }
+    } else {
+        let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
+        let NumOfIDS = Fcontent.split(`|i|`);
+        PeopleSChat = NumOfIDS[1].split(`|r|`);
+        if (PeopleSChat) {
+            for (i = 0; i < PeopleSChat.length; i++) {
+                temptask = PeopleSChat[i].split(`|n|`)
+                if (AllData[i] != undefined) {
+                    for (let j = 0; j < 42; j++) {
+                        AllData[i][j] = temptask[j];
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Check id data and add element on new id
+
+    let isNewID = true;
+    for (let i = 0; i < NumOfIDS[0]; i++) {
+        if (AllData[i][1] == chatId) {
+            isNewID = false
+            break;
+        }
+    }
+    if (isNewID == true) {
+        NumOfIDS[0]++
+        switch (msg.chat.type) {
+            case `group`:
+            case "supergroup":
+                let inp1 = msg.chat.title.split(`|`);
+                AllData.push([`${inp1[0]}`, `${chatId}`,
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                    '', '', '', '', '', '', '', '', '', '', ''])
+                break
+            case "private":
+                let inp2 = msg.chat.first_name.split(`|`);
+                AllData.push([`${inp2[0]}`, `${chatId}`,
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                    '', '', '', '', '', '', '', '', '', '', ''])
+                break
+        }
+
+        // write id data 
+
+        let writedata = `${NumOfIDS[0]}|i|`
+        for (let i = 0; i < NumOfIDS[0]; i++) {
+            for (j = 0; j < 42; j++) {
+                if (AllData[i][j] != undefined) {
+                    writedata += `${AllData[i][j]}`
+                }
+                writedata += `|n|`
+            }
+            if ((NumOfIDS[0] - i) > 1) {
+                writedata += `\r\n|r|`
+            }
+        }
+        if (weekNumber() % 2 == 0) {
+            fs.writeFileSync("ids_odd.txt", writedata);
+        }
+        else {
+            fs.writeFileSync("ids_even.txt", writedata);
+        }
+    }
 }
