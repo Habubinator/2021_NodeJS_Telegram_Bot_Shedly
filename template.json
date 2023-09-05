@@ -1,0 +1,50 @@
+{
+    "chatID": "",
+    "odd": {
+        "monday": {
+            "pairs": []
+        },
+        "tuesday":{
+            "pairs": []
+        },
+        "wednessday":{
+            "pairs": []
+        },
+        "thursday":{
+            "pairs": []
+        },
+        "friday":{
+            "pairs": []
+        },
+        "saturday":{
+            "pairs": []
+        },
+        "sunday":{
+            "pairs": []
+        }
+    },
+
+    "even": {
+        "monday": {
+            "pairs": []
+        },
+        "tuesday":{
+            "pairs": []
+        },
+        "wednessday":{
+            "pairs": []
+        },
+        "thursday":{
+            "pairs": []
+        },
+        "friday":{
+            "pairs": []
+        },
+        "saturday":{
+            "pairs": []
+        },
+        "sunday":{
+            "pairs": []
+        }
+    }
+}

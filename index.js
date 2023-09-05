@@ -1,82 +1,26 @@
 ﻿const TelegramApi = require(`node-telegram-bot-api`);
-const token = `2135685566:AAG-5wGTWgL7r0PBolPgbGxilqe1QqCL82s`; // NEW TOKEN
+const token = ``; // NEW TOKEN
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
-const { send } = require("express/lib/response");
-let sender = 'aboba';
-// Чтобы сервак не падал
 
-/* 
-// ПЫТАЛСЯ СДЕЛАТЬ АВТОПИНГ БОТА НО ВСЁ ПОШЛО ПО ПИЗДЕ
-// Впустую потрачено часов на фикс: 4 - Обновить если в будущем потянет заниматься хуйнёй
 
-// Ищем порт
-const express = require('express')
-const app = express()
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Порт - ${PORT}`);
-});
-
-// сбрасываем идл хероку
-var http = require('http');
-
-function KeepAlive() {
-    setInterval(function () {
-        var KeepAliveOptions = {
-            host: 'shedule-as-212.herokuapp.com',
-            port: 80,
-            path: '/'
-        };
-        http.get(KeepAliveOptions, function (res) {
-            res.on('data', function (chunk) {
-                try {
-                    console.log('Heroku responded - ' + chunk)
-                }
-                catch (err) {
-                    console.log(err.message);
-                }
-            });
-        }).on('error', function (err) {
-            console.log('Error: ' + err.message);
-        });
-    }, 20*60*1000) // 20 minutes
-}
-*/
-//
+let dataJson = require('./ids.json')
+let templateJson = require('./template.json')
 const Options = {
     disable_web_page_preview: true,
     parse_mode: `HTML`
 }
 
-bot.setMyCommands([{ command: '/schedule_today', description: 'Расписание' },
-                   { command: '/schedule_tomorrow', description: 'Расписание на завтра' },
-                   { command: '/anek', description: 'Смешной (или нет) анек' },
-                   { command: '/nahuy', description: 'ЛЕША ШЛЕТ НАХУЙ'}])
+bot.setMyCommands([{ command: '/start', description: 'Запустити бота' },
+                   { command: '/schedule_create', description: 'Приєднати розклад до чату' },
+                   { command: '/schedule_today', description: 'Розклад на сьогодні' },
+                   { command: '/schedule_tomorrow', description: 'Розклад на завтра' },
+                   { command: '/schedule_saturday', description: 'Підглянути, що буде у субботу' },
+                   { command: '/schedule_settings', description: 'Налаштувати розклад' },
+                   { command: '/help', description: 'Допомога' }
+                ])
 
 // Database after restart of a bot 
-
-var AllData = [[``, ``]]
-let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
-let NumOfIDS = Fcontent.split(`|i|`);
-PeopleSChat = NumOfIDS[1].split(`|r|`);
-if (PeopleSChat) {
-    for (let i = 0; i < NumOfIDS[0] - 1; i++) {
-        if (AllData[i] != undefined) {
-            AllData.push([``, ``])
-        }
-    }
-    for (i = 0; i < PeopleSChat.length; i++) {
-        temptask = PeopleSChat[i].split(`|n|`)
-        if (AllData[i] != undefined) {
-            for (let j = 0; j < 42; j++) {
-                AllData[i][j] = temptask[j];
-            }
-        }
-
-    }
-}
 
 var re = /\\n/gi;
 let tempaneks = fs.readFileSync("aneks.txt", "utf-8")
@@ -92,258 +36,67 @@ bot.on(`message`, async msg => {
     var text = msg.text;
     var chatId = msg.chat.id;
 
-    //чекалка сообщений 
-
-    if (`${chatId}` == `${sender}`) {
-        console.log(msg)
-        bot.sendMessage(`513950472`, text, Options);
-    }
-
 
     if (text != `/q`) {
         var CurrTime = Date.now() / 1000;
         if (CurrTime - msg.date <= 300) {
             console.log(`Replied!`)
-            console.log(msg);
+            console.log("Sender: "+ msg.from.first_name + " with id: " + chatId +"\n" + text);
 
-            // MAIN COMMAND
-
-            if (text === `/schedule_today` || text === `/schedule_today@JekichSheduleBot`) {
-
-                // Check week number, read Id and create array
-
-                if (weekNumber() % 2 == 0) {
-                    let Fcontent = fs.readFileSync("ids_odd.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                // Check id data and add element on new id
-
-                let isNewID = true;
-                for (let i = 0; i < NumOfIDS[0]; i++) {
-                    if (AllData[i][1] == chatId) {
-                        isNewID = false
-                        break;
-                    }
-                }
-                if (isNewID == true) {
-                    NumOfIDS[0]++
-                    switch (msg.chat.type) {
-                        case `group`:
-                        case "supergroup":
-                            let inp1 = msg.chat.title.split(`|`);
-                            AllData.push([`${inp1[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                        case "private":
-                            let inp2 = msg.chat.first_name.split(`|`);
-                            AllData.push([`${inp2[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                    }
-
-                    // write id data 
-
-                    let writedata = `${NumOfIDS[0]}|i|`
-                    for (let i = 0; i < NumOfIDS[0]; i++) {
-                        for (j = 0; j < 42; j++) {
-                            if (AllData[i][j] != undefined) {
-                                writedata += `${AllData[i][j]}`
-                            }
-                            writedata += `|n|`
-                        }
-                        if ((NumOfIDS[0] - i) > 1) {
-                            writedata += `\r\n|r|`
-                        }
-                    }
-                    if (weekNumber() % 2 == 0) {
-                        fs.writeFileSync("ids_odd.txt", writedata);
-                    }
-                    else {
-                        fs.writeFileSync("ids_even.txt", writedata);
-                    }
-                }
-
-                // Test
-
-                //console.log(AllData);
-                //console.log(isNewID);
-                //console.log(NumOfIDS[0]);
-                //console.log(AllData);
-
-                // Send answear
-                return bot.sendMessage(chatId, FindShedule(chatId,true), Options); //await
-
-            }
-            if (text === "/schedule_tomorrow" || text === "/schedule_tomorrow@JekichSheduleBot") {
-                // Check week number, read Id and create array
-
-                if (weekNumber() % 2 == 0) {
-                    let Fcontent = fs.readFileSync("ids_odd.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    let Fcontent = fs.readFileSync("ids_even.txt", "utf8");
-                    let NumOfIDS = Fcontent.split(`|i|`);
-                    PeopleSChat = NumOfIDS[1].split(`|r|`);
-                    if (PeopleSChat) {
-                        for (i = 0; i < PeopleSChat.length; i++) {
-                            temptask = PeopleSChat[i].split(`|n|`)
-                            if (AllData[i] != undefined) {
-                                for (let j = 0; j < 42; j++) {
-                                    AllData[i][j] = temptask[j];
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                // Check id data and add element on new id
-
-                let isNewID = true;
-                for (let i = 0; i < NumOfIDS[0]; i++) {
-                    if (AllData[i][1] == chatId) {
-                        isNewID = false
-                        break;
-                    }
-                }
-                if (isNewID == true) {
-                    NumOfIDS[0]++
-                    switch (msg.chat.type) {
-                        case `group`:
-                        case "supergroup":
-                            let inp1 = msg.chat.title.split(`|`);
-                            AllData.push([`${inp1[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                        case "private":
-                            let inp2 = msg.chat.first_name.split(`|`);
-                            AllData.push([`${inp2[0]}`, `${chatId}`,
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                                '', '', '', '', '', '', '', '', '', '', ''])
-                            break
-                    }
-
-                    // write id data 
-
-                    let writedata = `${NumOfIDS[0]}|i|`
-                    for (let i = 0; i < NumOfIDS[0]; i++) {
-                        for (j = 0; j < 42; j++) {
-                            if (AllData[i][j] != undefined) {
-                                writedata += `${AllData[i][j]}`
-                            }
-                            writedata += `|n|`
-                        }
-                        if ((NumOfIDS[0] - i) > 1) {
-                            writedata += `\r\n|r|`
-                        }
-                    }
-                    if (weekNumber() % 2 == 0) {
-                        fs.writeFileSync("ids_odd.txt", writedata);
-                    }
-                    else {
-                        fs.writeFileSync("ids_even.txt", writedata);
-                    }
-                }
-                return bot.sendMessage(chatId, FindShedule(chatId,false), Options);
-            }
-            // FAN COMMANDS
-
-            // WRITE 1000-7
-
-            if (text === `jghoul`) {
-                let i = 993;
-                let timerId = setInterval(function ghoul() {
-                    if (i >= 0) {
-                        try {
-                            bot.sendMessage(`513950472`, `${i + 7}-7 = ${i}`); i -= 7; //id = 377270472 лёха 513950472 мой 1277561606 nokit
-                        } catch (error) {
-                            console.log(error)
-                            return
-                        }
-                    }
-                    else {
-                        bot.sendMessage(`513950472`, `ya ghoul`);
-                        clearInterval(timerId);
-                    }
-                }, 400);
+            if(text === `/start` || text === `/start@schedly_bot`){
+                return bot.sendMessage(chatId, "Привіт😉 \nЗ цим ботом лінки будуть завжди під рукою!\nСтвори свій розклад та економ свій час." 
+                + "/schedule_create - Створити розклад \n/schedule_settings - Налаштувати розклад \n" 
+                + "/schedule_today - Розклад на сьогодні \n/schedule_tomorrow - Розклад на завтра \n/help - якщо треба допомога", Options);
             }
 
-            if (text != undefined &&
-                chatId == '513950472') {
-
-                //CHANGE TO WHO WE SEND
-
-                if (text == 'jchsnd') {
-                    return bot.sendMessage(chatId, `Now sending msg to ${sender}`, Options);
-                } else
-                    if (text.indexOf(`jchsnd `) > -1) {
-                        sender = text.substring(7);
-                        return bot.sendMessage(chatId, `Now sending msg to ${sender}`, Options);
-                    }
-
-                // WRITE CUSTOM MSG
-
-                if (text.indexOf(`j123 `) > -1) {
-                    //return bot.sendMessage(chatId, `Скайнет поздравляет <a href="tg://user?id=513950472">Жекича Браввиссимо</a> с Днём Рождения`, Options);
-                    // await to make it sync
-                    let temp = text.substring(5)
-                    return bot.sendMessage(sender, temp, Options);
-                    // await to make it sync
+            if(text === `/schedule_create` || text === `/schedule_create@schedly_bot`){
+                if(isNewChat(chatId)){
+                    addNewChat(chatId)
+                    return bot.sendMessage(chatId, "Розклад добавлений, але це ще не все. \n/schedule_settings - Налаштувати розклад", Options);
+                }else{
+                    return bot.sendMessage(chatId, "У цьому чаті вже зроблений розклад \n/schedule_settings - Налаштувати розклад", Options);
                 }
             }
 
+            if(text === `/schedule_settings` || text === `/schedule_settings@schedly_bot`){
+                // TODO
+                return bot.sendMessage(chatId, "Покищо в розробці :(", Options);
+            }
 
-            //Было временно стало постоянно
+            if (text === `/schedule_today` || text === `/schedule_today@schedly_bot`) {
+                if(isNewChat(chatId)){
+                    return bot.sendMessage(chatId, "Розклад не прив'язаний до цього чату \n/schedule_create - Створити розклад \n/schedule_settings - Налаштувати розклад", Options);
+                } 
+                return bot.sendMessage(chatId, FindShedule(chatId,true, false), Options);
+            }
 
-            if (text === `/nahuy` || text === `/nahuy@JekichSheduleBot`) {
+            if (text === "/schedule_tomorrow" || text === "/schedule_tomorrow@schedly_bot") {
+                if(isNewChat(chatId)){
+                    return bot.sendMessage(chatId, "Розклад не прив'язаний до цього чату \n/schedule_create - Створити розклад \n/schedule_settings - Налаштувати розклад", Options);
+                } 
+                return bot.sendMessage(chatId, FindShedule(chatId,false, false), Options);
+            }
+
+            if (text === "/schedule_saturday" || text === "/schedule_saturday@schedly_bot") {
+                if(isNewChat(chatId)){
+                    return bot.sendMessage(chatId, "Розклад не прив'язаний до цього чату \n/schedule_create - Створити розклад \n/schedule_settings - Налаштувати розклад", Options);
+                } 
+                return bot.sendMessage(chatId, FindShedule(chatId,false, true), Options);
+            }
+
+            if(text === "/help" || text === "/help@schedly_bot"){
+                return bot.sendMessage(chatId, "Пиши мені на юзер - @Munakuso", Options);
+            }
+
+            if(text === "/export_database"){
+                return bot.sendDocument(`513950472`, './ids.json', Options);
+            }
+
+            if (text === `/nahuy` || text === `/nahuy@schedly_bot`) {
                 bot.sendSticker(chatId, `poshel.webp`);
             }
-            if (text === `/anek` || text === `/anek@JekichSheduleBot`) {
+
+            if (text === `/anek` || text === `/anek@schedly_bot`) {
                 let chosenanek = AllAneks[Math.floor(Math.random() * AllAneks.length)]
                 return bot.sendMessage(chatId, chosenanek, Options);
             }
@@ -351,108 +104,96 @@ bot.on(`message`, async msg => {
     }
 })
 
-
-// CHECK DAY 
-
 function FindTime(time) {
     var CheckTime = new Date();
     return time = CheckTime.getDay();
 }
 
-// FORM SCHEDULE 
-
-function FindShedule(chatId, isToday) {
-    let PosOfId;
-    for (let i = 0; i < NumOfIDS[0]; i++) {
-        if (AllData[i][1] == chatId) {
-            PosOfId = i;
-            break;
+function FindShedule(chatId, isToday, isSaturday) {
+    let time = 6;
+    if(!isSaturday){
+        time = FindTime();
+        if (!isToday) {
+            time += 1;
+        } 
+        if(time >= 7){
+            time = 0;
         }
     }
-    let time = FindTime();
-    if (!isToday) {
-        time += 1;
-    } 
+    const pairs = chatSchedule(chatId);
+    let daySchedule;
     let result;
-    let firstnum;
-    let secondnum;
+
     switch (time) {
         case 6:
             let date_for_saturday = new Date();
-            if (date_for_saturday.getFullYear() == 2022) {
-                result = `\nСуботнее расписание:\n\n`;
+            if (date_for_saturday.getFullYear() == 2023) {
+                //TODO - Зробити суботній розклад і для політехники за формулами і окремо
+                result = `\nРозклад на суботу:\n\n`;
                 
-                week = (weekNumber() - 35) % 5
+                week = (weekNumber() - 37) % 5
+                week = week<0? 1: week
                 switch (week) {
                     case 1:
-                        firstnum = 2;
-                        secondnum = 9;
+                        daySchedule = pairs.monday
                         break;
                     case 2:
-                        firstnum = 10;
-                        secondnum = 17;
+                        daySchedule = pairs.tuesday
                         break;
                     case 3:
-                        firstnum = 18;
-                        secondnum = 25;
+                        daySchedule = pairs.wednessday
                         break;
                     case 4:
-                        firstnum = 26;
-                        secondnum = 33;
+                        daySchedule = pairs.thursday
                         break;
                     case 0:
-                        firstnum = 34;
-                        secondnum = 41;
+                        daySchedule = pairs.friday
                         break;
                 }
                 
             } else {
-                result = `Версия бота устарела, во избежание проблем скрипт расчёта расписания на субботу приостановлен`
+                result = `Версія бота застаріла, тому скріпт треба трішки переписати, зв'яжіться зі мною через /help`
             }
             break;
         case 0:
+            result = `\nРозклад на неділю:\n\n`;
+            daySchedule = pairs.sunday
+            break;
         case 1:
-            result = `\nЕбучий понедельник:\n\n`;
-            firstnum = 2;
-            secondnum = 9;
+            result = `\nРозклад на понеділок:\n\n`;
+            daySchedule = pairs.monday
             break;
         case 2:
-            result = `\nЕбучий вторник:\n\n`
-            firstnum = 10;
-            secondnum = 17;
+            result = `\nРозклад на вівторок:\n\n`
+            daySchedule = pairs.tuesday
             break;
         case 3:
-            result = `\nСреда - половина недели:\n\n`
-            firstnum = 18;
-            secondnum = 25;
+            result = `\nРозклад на середу:\n\n`
+            daySchedule = pairs.wednessday
             break;
         case 4:
-            result = `\nЧетверг - почти отдых:\n\n`;
-            firstnum = 26;
-            secondnum = 33;
+            result = `\nРозклад на четвер:\n\n`;
+            daySchedule = pairs.thursday
             break;
         case 5:
-            result = `\nПятница - скоро отдых:\n\n`
-            firstnum = 34;
-            secondnum = 41;
+            result = `\nРозклад на п'ятницю:\n\n`
+            daySchedule = pairs.friday
     }
-    result = CheckID(firstnum,secondnum, PosOfId, result);
+    result += CheckID(daySchedule);
     return result;
 }
 
-// ECONOM SPACE IN CODE 
-function CheckID(startint, lastint, PosOfId, result) {
-    for (let i = startint; i <= lastint; i++) {
-        if (AllData[PosOfId][i]) {
-            result += `${AllData[PosOfId][i]}\n`
-            /*
-            if (i % 2 == 1) {
-                result += `\n`
-            }
-            */
+function CheckID(day) {
+    let textOfReply = "";
+    day.pairs.forEach(pair => {
+        if(pair.name != ""){
+            let link = pair.link;
+            link_test = link.includes("https://")||link.includes("http://")?`<a href="${link}">лінк ось тут</a>`:link
+            textOfReply += pair.name + `\n` + link_test;
+            textOfReply += `\n`
         }
-    }
-    return result;
+    });
+    return textOfReply
 }
 
 function weekNumber(date = new Date()) {
@@ -460,4 +201,38 @@ function weekNumber(date = new Date()) {
     var dayNr = Math.ceil((date - firstJanuary) / (24 * 60 * 60 * 1000));
     var weekNr = Math.ceil((dayNr + firstJanuary.getDay()) / 7);
     return weekNr;
+}
+
+function isNewChat(chatId){
+    let isNewID = true;
+    for (let i = 0; i < dataJson.length; i++) {
+        if (dataJson[i].chatID == chatId) {
+            isNewID = false
+            break;
+        }
+    }
+    return isNewID
+}
+
+function chatSchedule(chatId){
+    for (let i = 0; i < dataJson.length; i++) {
+        if (dataJson[i].chatID == chatId) {
+            return isOddEven()? dataJson[i].odd: dataJson[i].even
+        }
+    }
+}
+
+function isOddEven(){
+    return weekNumber() % 2 == 0? true: false; // У цьому році навчальна неділя началась з 4 вересня (36) 
+}
+
+function addNewChat(chatId){
+    templateJson.chatID = chatId;
+    dataJson.push(templateJson)
+    templateJson.chatID = "";
+    fs.writeFile("ids.json", JSON.stringify(dataJson), (error) => {
+        if (error) {
+        console.error(error);
+        }
+    }) 
 }
