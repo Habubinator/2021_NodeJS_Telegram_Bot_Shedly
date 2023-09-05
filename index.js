@@ -1,9 +1,5 @@
 ﻿const TelegramApi = require(`node-telegram-bot-api`);
-<<<<<<< HEAD
 const token = ``; // NEW TOKEN
-=======
-const token = ``; // INSERT YOUR TOKEN
->>>>>>> 861d199e42020b3cd5e6dbd83657917f593c22f3
 const bot = new TelegramApi(token, { polling: true });
 const fs = require(`fs`);
 
@@ -206,7 +202,6 @@ function weekNumber(date = new Date()) {
     var weekNr = Math.ceil((dayNr + firstJanuary.getDay()) / 7);
     return weekNr;
 }
-<<<<<<< HEAD
 
 function isNewChat(chatId){
     let isNewID = true;
@@ -241,5 +236,3 @@ function addNewChat(chatId){
         }
     }) 
 }
-=======
->>>>>>> 861d199e42020b3cd5e6dbd83657917f593c22f3
